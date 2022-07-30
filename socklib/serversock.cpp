@@ -48,7 +48,9 @@ namespace ace {
 		int activity = select ( max_sd + 1 , &readfds , NULL , NULL , &select_timeout );
 
 		if ( activity < 0 ) {
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
 			printf ( "%s/select failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+#endif
 			return ACE_SOCK_SEL_FAILED;
 		}
 
@@ -60,15 +62,10 @@ namespace ace {
 			Socket new_socket = this->accept ( );
 			if ( new_socket.valid ( ) ) {
 				this->clients.push_back ( new_socket );
-
-				sockaddr_in addr;
-				socklen_t serv_len = sizeof ( addr );
-				ret = getpeername ( new_socket.id , ( struct sockaddr * ) &addr , &serv_len );
-				if ( ret != 0 ) {
-					printf ( "%s/getpeername warning : %s.\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
-				} else {
-					printf ( "connection established with %s::%d.\n" , inet_ntoa ( addr.sin_addr ) , ntohs ( addr.sin_port ) );
-				}
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+				printf ( "perr %s connected.\n" , new_socket.name ( ).c_str ( ) );
+#endif
+				OnConnect ( new_socket );
 			}
 		}
 
@@ -82,29 +79,26 @@ namespace ace {
 					// incoming message.
 					int ret = recv ( itr->id , buffer , 1024 , 0 );
 					if ( ret == 0 ) {
-						sockaddr_in addr;
-						socklen_t serv_len = sizeof ( addr );
-						ret = getpeername ( itr->id , ( struct sockaddr * ) &addr , &serv_len );
-						if ( ret != 0 ) {
-							printf ( "%s/getpeername warning : %s.\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
-						} else {
-							printf ( "client %s::%d disconnected.\n" , inet_ntoa ( addr.sin_addr ) , ntohs ( addr.sin_port ) );
-						}
-
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+						printf ( "peer %s disconnected.\n" , itr->name ( ).c_str ( ) );
+#endif
+						OnDisconnect ( *itr );
 						itr->shutdown ( );
 						itr->close ( );
 						this->clients.erase ( itr );
 					} else if ( ret > 0 ) {
-						sockaddr_in addr;
-						socklen_t serv_len = sizeof ( addr );
-						ret = getpeername ( itr->id , ( struct sockaddr * ) &addr , &serv_len );
-						if ( ret != 0 ) {
-							printf ( "%s/getpeername warning : %s.\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
-						} else {
-							printf ( "received %d bytes from client %s::%d.\n" , ret , inet_ntoa ( addr.sin_addr ) , ntohs ( addr.sin_port ) );
-						}
-
-						printf ( "received %d bytes from client %d.\n" , ret , itr->id );
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+						printf ( "received %d bytes from client %s.\n" , ret , itr->name ( ).c_str ( ) );
+#endif
+						OnMessage ( *itr , buffer , ret );
+					} else {
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+						printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+						printf ( "connection with %s closed.\n" , itr->name ( ).c_str ( ) );
+#endif
+						OnDisconnect ( *itr );
+						itr->close ( );
+						this->clients.erase ( itr );
 					}
 				}
 			}

@@ -1,5 +1,6 @@
 #include "socket.h"
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
@@ -219,6 +220,16 @@ namespace ace {
 
 	bool Socket::valid ( ) const {
 		return this->id != INVALID_SOCKET;
+	}
+
+	std::string Socket::name ( ) const {
+		sockaddr_in addr;
+		socklen_t serv_len = sizeof ( addr );
+		int ret = getpeername ( this->id , ( struct sockaddr * ) &addr , &serv_len );
+		if ( ret != 0 ) {
+			return "unkown";
+		}
+		return std::string ( inet_ntoa ( addr.sin_addr ) ) + "::" + std::to_string ( ntohs ( addr.sin_port ) );
 	}
 
 }

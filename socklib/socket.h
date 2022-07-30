@@ -2,6 +2,8 @@
 
 #include "socklib.h"
 
+#include <string>
+
 namespace ace {
 
 	class Socket {
@@ -10,6 +12,8 @@ namespace ace {
 		Socket ( );
 		Socket ( unsigned int id );
 		virtual ~Socket ( );
+
+		std::string name ( ) const;
 
 		Socket accept ( );
 

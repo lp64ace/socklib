@@ -6,7 +6,7 @@
 
 namespace ace {
 
-	class ServerSocket : public Socket {
+	class ServerSocket : protected Socket {
 	public:
 		ServerSocket ( );
 		~ServerSocket ( );
@@ -14,6 +14,10 @@ namespace ace {
 		int Start ( int port );
 
 		int PollEvents ( int timeout );
+
+		virtual void OnConnect ( Socket& client ) { }
+		virtual void OnMessage ( Socket& from , const void *buffer , int len ) { }
+		virtual void OnDisconnect ( Socket& client ) { }
 	private:
 		std::list<Socket> clients;
 	};
