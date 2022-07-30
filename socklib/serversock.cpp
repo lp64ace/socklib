@@ -99,6 +99,7 @@ namespace ace {
 						OnDisconnect ( *itr );
 						itr->close ( );
 						this->clients.erase ( itr );
+						// DO NOT RETURN HERE THERE ARE MORE CLIENTS TO SERVE.
 					}
 				}
 			}
@@ -106,6 +107,7 @@ namespace ace {
 		}
 
 		free ( buffer );
+		return ACE_SOCK_OK;
 	}
 
 }
