@@ -36,7 +36,7 @@ int main ( void ) {
 	std::thread server ( [ ] ( ) {
 		if ( ace::SockInit ( ) == ACE_SOCK_OK ) {
 			bkServerSocket server;
-			if ( server.Start ( 25565 ) == ACE_SOCK_OK ) {
+			if ( server.Start ( 80 ) == ACE_SOCK_OK ) {
 				while ( server.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
 				}
 			} else {
@@ -49,7 +49,7 @@ int main ( void ) {
 	std::thread client ( [ ] ( ) {
 		if ( ace::SockInit ( ) == ACE_SOCK_OK ) {
 			bkClientSocket client;
-			if ( client.ConnectTCP ( "10.101.101.23" , 25565 ) == ACE_SOCK_OK ) {
+			if ( client.ConnectTCP ( "127.0.0.1" , 80 ) == ACE_SOCK_OK ) {
 				while ( client.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
 				}
 			} else {
