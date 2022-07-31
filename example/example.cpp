@@ -1,6 +1,5 @@
 #include <acesock.h>
 #include <stdio.h>
-#include <thread>
 
 #define TIMEOUT_MS			16
 
