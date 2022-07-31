@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+
 namespace ace {
 
 	Socket::Socket ( ) : id ( INVALID_SOCKET ) {
