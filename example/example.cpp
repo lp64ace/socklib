@@ -53,7 +53,7 @@ int main ( void ) {
 				while ( client.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
 				}
 			} else {
-				printf ( "failed to start server.\n" );
+				printf ( "failed to start client.\n" );
 			}
 			ace::SockQuit ( );
 		}
