@@ -16,6 +16,13 @@ namespace ace {
 
 	ServerSocket::~ServerSocket ( ) {
 		if ( valid ( ) ) {
+			for ( std::list<Socket>::iterator itr = this->clients.begin ( ); itr != this->clients.end ( ); itr++ ) {
+				if ( itr->valid ( ) ) {
+					OnDisconnect ( *itr );
+				}
+			}
+			this->clients.clear ( );
+
 			shutdown ( );
 			close ( );
 		}
@@ -63,13 +70,13 @@ namespace ace {
 			if ( new_socket.valid ( ) ) {
 				this->clients.push_back ( new_socket );
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
-				printf ( "perr %s connected.\n" , new_socket.name ( ).c_str ( ) );
+				printf ( "SERVER : peer %s connected.\n" , new_socket.name ( ).c_str ( ) );
 #endif
 				OnConnect ( new_socket );
 			}
 		}
 
-		char *buffer = ( char * ) malloc ( 1024 );
+		char *buffer = ( char * ) malloc ( 65536 );
 
 		for ( std::list<Socket>::iterator itr = this->clients.begin ( ); itr != this->clients.end ( ); ) {
 			std::list<Socket>::iterator next = itr; next++;
@@ -77,10 +84,10 @@ namespace ace {
 				if ( FD_ISSET ( itr->id , &readfds ) ) {
 					// Check if it was for closing , and also read the 
 					// incoming message.
-					int ret = recv ( itr->id , buffer , 1024 , 0 );
+					int ret = recv ( itr->id , buffer , 65536 , 0 );
 					if ( ret == 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
-						printf ( "peer %s disconnected.\n" , itr->name ( ).c_str ( ) );
+						printf ( "SERVER : peer %s disconnected.\n" , itr->name ( ).c_str ( ) );
 #endif
 						OnDisconnect ( *itr );
 						itr->shutdown ( );
@@ -88,13 +95,13 @@ namespace ace {
 						this->clients.erase ( itr );
 					} else if ( ret > 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
-						printf ( "received %d bytes from client %s.\n" , ret , itr->name ( ).c_str ( ) );
+						printf ( "SERVER : received %d bytes from client %s.\n" , ret , itr->name ( ).c_str ( ) );
 #endif
 						OnMessage ( *itr , buffer , ret );
 					} else {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
 						printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
-						printf ( "connection with %s closed.\n" , itr->name ( ).c_str ( ) );
+						printf ( "SERVER : connection with %s closed.\n" , itr->name ( ).c_str ( ) );
 #endif
 						OnDisconnect ( *itr );
 						itr->close ( );

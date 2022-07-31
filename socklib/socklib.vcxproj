@@ -179,12 +179,14 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clientsock.cpp" />
     <ClCompile Include="serversock.cpp" />
     <ClCompile Include="socket.cpp" />
     <ClCompile Include="socklib.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="acesock.h" />
+    <ClInclude Include="clientsock.h" />
     <ClInclude Include="serversock.h" />
     <ClInclude Include="sockdefs.h" />
     <ClInclude Include="socket.h" />

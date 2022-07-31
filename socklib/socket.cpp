@@ -222,6 +222,28 @@ namespace ace {
 		return this->id != INVALID_SOCKET;
 	}
 
+	int Socket::send ( const void *buffer , int len ) {
+		int ret = ::send ( id , ( const char * ) buffer , len , 0 );
+		if ( ret < 0 ) {
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+			printf ( "%s/send failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+#endif
+			return ACE_SOCK_SEND_FAILED;
+		}
+		return ACE_SOCK_OK;
+	}
+
+	int Socket::send ( const Socket &to , const void *buffer , int len ) {
+		int ret = ::send ( to.id , ( const char * ) buffer , len , 0 );
+		if ( ret < 0 ) {
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+			printf ( "%s/send failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+#endif
+			return ACE_SOCK_SEND_FAILED;
+		}
+		return ACE_SOCK_OK;
+	}
+
 	std::string Socket::name ( ) const {
 		sockaddr_in addr;
 		socklen_t serv_len = sizeof ( addr );

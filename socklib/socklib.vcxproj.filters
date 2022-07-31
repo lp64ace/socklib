@@ -24,6 +24,9 @@
     <ClCompile Include="serversock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="clientsock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="socklib.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="serversock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clientsock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

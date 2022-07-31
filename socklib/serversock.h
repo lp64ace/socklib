@@ -6,7 +6,7 @@
 
 namespace ace {
 
-	class ServerSocket : protected Socket {
+	class ServerSocket : private Socket {
 	public:
 		ServerSocket ( );
 		~ServerSocket ( );
@@ -14,6 +14,8 @@ namespace ace {
 		int Start ( int port );
 
 		int PollEvents ( int timeout );
+
+		inline int Send ( const Socket &client , const void *buf , int len ) { return Socket::send ( client , buf , len ); }
 
 		virtual void OnConnect ( Socket& client ) { }
 		virtual void OnMessage ( Socket& from , const void *buffer , int len ) { }

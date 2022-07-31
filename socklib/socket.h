@@ -22,9 +22,13 @@ namespace ace {
 		int close ( );
 		int shutdown ( );
 
+		int send ( const void *buffer , int len );
+		int send ( const Socket& to , const void *buffer , int len );
+
 		bool valid ( ) const;
 
 		friend class ServerSocket;
+		friend class ClientSocket;
 	};
 
 }
