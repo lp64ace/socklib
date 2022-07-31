@@ -69,7 +69,7 @@ namespace ace {
 			Socket new_socket = this->accept ( );
 			if ( new_socket.valid ( ) ) {
 				this->clients.push_back ( new_socket );
-#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 				printf ( "SERVER : peer %s connected.\n" , new_socket.name ( ).c_str ( ) );
 #endif
 				OnConnect ( new_socket );
@@ -86,7 +86,7 @@ namespace ace {
 					// incoming message.
 					int ret = recv ( itr->id , buffer , 65536 , 0 );
 					if ( ret == 0 ) {
-#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 						printf ( "SERVER : peer %s disconnected.\n" , itr->name ( ).c_str ( ) );
 #endif
 						OnDisconnect ( *itr );
@@ -94,13 +94,15 @@ namespace ace {
 						itr->close ( );
 						this->clients.erase ( itr );
 					} else if ( ret > 0 ) {
-#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 						printf ( "SERVER : received %d bytes from client %s.\n" , ret , itr->name ( ).c_str ( ) );
 #endif
 						OnMessage ( *itr , buffer , ret );
 					} else {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
 						printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+#endif
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 						printf ( "SERVER : connection with %s closed.\n" , itr->name ( ).c_str ( ) );
 #endif
 						OnDisconnect ( *itr );

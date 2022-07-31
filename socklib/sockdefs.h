@@ -1,8 +1,13 @@
 #pragma once
 
 #define ACE_BUILD_WITH_IO			0x00000001
+#define ACE_BUILD_WITH_DBG_IO			0x00000002
 
-#define ACE_BUILD_CONF				(ACE_BUILD_WITH_IO)
+#ifdef _DEBUG
+	#define ACE_BUILD_CONF				(ACE_BUILD_WITH_IO|ACE_BUILD_WITH_DBG_IO)
+#else
+	#define ACE_BUILD_CONF				(ACE_BUILD_WITH_IO)
+#endif
 
 #define ACE_SOCK_OK				0x00000000
 

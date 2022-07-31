@@ -23,7 +23,7 @@ namespace ace {
 
 	int ClientSocket::ConnectTCP ( const char *ip , int port ) {
 		ACE_SOCK_ASSERT_FUNC ( this->connect_tcp ( ip , port ) );
-#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 		printf ( "CLIENT : connected to %s.\n" , this->name ( ).c_str ( ) );
 #endif
 		OnConnect ( );
@@ -59,7 +59,7 @@ namespace ace {
 			// incoming message.
 			int ret = recv ( id , buffer , 65536 , 0 );
 			if ( ret == 0 ) {
-#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 				printf ( "CLIENT : peer %s disconnected.\n" , this->name ( ).c_str ( ) );
 #endif
 				OnDisconnect ( );
@@ -70,13 +70,15 @@ namespace ace {
 
 				return ACE_SOCK_DISCONNECTED;
 			} else if ( ret > 0 ) {
-#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 				printf ( "CLIENT : received %d bytes from client %s.\n" , ret , this->name ( ).c_str ( ) );
 #endif
 				OnMessage ( buffer , ret );
 			} else {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
 				printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+#endif
+#if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 				printf ( "CLIENT : connection with %s closed.\n" , this->name ( ).c_str ( ) );
 #endif
 				OnDisconnect ( );
