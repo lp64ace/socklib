@@ -18,6 +18,7 @@ using namespace ace;
 ### Usecase
 
 * Socklib wraps the code for the server and client using virtual functions.
+* There is also an example without the use of threads in the example directory.
 
 ```cpp
 #include <acesock.h>
