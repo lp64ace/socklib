@@ -18,19 +18,24 @@ namespace ace {
 	ClientSocket::~ClientSocket ( ) {
 		if ( this->valid ( ) ) {
 			OnDisconnect ( );
+			close ( );
 		}
 	}
 
 	int ClientSocket::ConnectTCP ( const char *ip , int port , addr_family family ) {
 		ACE_SOCK_ASSERT_FUNC ( this->connect_tcp ( ip , port , family ) );
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-		printf ( "CLIENT : connected to %s.\n" , this->name ( ).c_str ( ) );
+		printf ( "ace::client-socket : connected to %s.\n" , this->name ( ).c_str ( ) );
 #endif
 		OnConnect ( );
 		return ACE_SOCK_OK;
 	}
 
 	int ClientSocket::PollEvents ( int timeout ) {
+		if ( !valid ( ) ) {
+			return ACE_SOCK_DISCONNECTED;
+		}
+
 		//set of socket descriptors.
 		fd_set readfds;
 
@@ -60,7 +65,7 @@ namespace ace {
 			int ret = recv ( id , buffer , 65536 , 0 );
 			if ( ret == 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-				printf ( "CLIENT : peer %s disconnected.\n" , this->name ( ).c_str ( ) );
+				printf ( "ace::client-socket : peer %s disconnected.\n" , this->name ( ).c_str ( ) );
 #endif
 				OnDisconnect ( );
 				this->shutdown ( );
@@ -71,15 +76,18 @@ namespace ace {
 				return ACE_SOCK_DISCONNECTED;
 			} else if ( ret > 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-				printf ( "CLIENT : received %d bytes from client %s.\n" , ret , this->name ( ).c_str ( ) );
+				printf ( "ace::client-socket : received %d bytes from client %s.\n" , ret , this->name ( ).c_str ( ) );
 #endif
 				OnMessage ( buffer , ret );
 			} else {
+				int err = WSAGetLastError ( );
+				if ( err != WSAESHUTDOWN ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
-				printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+					printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( err ) );
 #endif
+				}
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-				printf ( "CLIENT : connection with %s closed.\n" , this->name ( ).c_str ( ) );
+				printf ( "ace::client-socket : connection with %s closed.\n" , this->name ( ).c_str ( ) );
 #endif
 				OnDisconnect ( );
 				this->close ( );
@@ -92,6 +100,11 @@ namespace ace {
 
 		free ( buffer );
 
+		return ACE_SOCK_OK;
+	}
+
+	int ClientSocket::Disconnect ( ) const {
+		ACE_SOCK_ASSERT_FUNC ( shutdown ( ) );
 		return ACE_SOCK_OK;
 	}
 

@@ -6,28 +6,31 @@
 class bkServerSocket : public ace::ServerSocket {
 public:
 	void OnConnect ( ace::Socket &client ) { // A client connected to this server.
-		this->Send ( client , "Greetings from Server." , 23 );
+		this->SendStr ( client , "Greetings from Server." );
 	}
 
 	void OnMessage ( ace::Socket &from , const void *buffer , int len ) { // Received message from client.
-		printf ( "SERVER RECEIVED : '%s'\n" , ( const char * ) buffer );
+		printf ( "server : '%s'\n" , ( const char * ) buffer );
+		this->Disconnect ( from );
 	}
 
 	void OnDisconnect ( ace::Socket &client ) { // Lost connection to client.
+		printf ( "server : %s disconnected.\n" , client.name ( ).c_str ( ) );
 	}
 };
 
 class bkClientSocket : public ace::ClientSocket {
 public:
 	void OnConnect ( ) { // Connected to server.
-		this->Send ( "Greetings from Client." , 23 );
+		this->SendStr ( "Greetings from Client." );
 	}
 
 	void OnMessage ( const void *buffer , int len ) { // Received message from server.
-		printf ( "CLIENT RECEIVED : '%s'\n" , ( const char * ) buffer );
+		printf ( "client : '%s'\n" , ToStr ( buffer ) );
 	}
 
 	void OnDisconnect ( ) { // Lost connection to server.
+		printf ( "client : disconnected.\n" );
 	}
 };
 

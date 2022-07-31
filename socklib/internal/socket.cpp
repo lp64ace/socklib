@@ -23,7 +23,7 @@ namespace ace {
 
 	}
 
-	int Socket::create ( int port , addr_family family ) {
+	int Socket::create ( int port , addr_family family , sock_type type ) {
 		if ( SockStatus ( ) != ACE_SOCK_OK ) {
 			ACE_SOCK_ASSERT_FUNC ( SockInit ( ) );
 		}
@@ -44,7 +44,11 @@ namespace ace {
 			case ace::ACE_AF_UNSPEC: hints.ai_family = AF_UNSPEC; break;
 			default: hints.ai_family = AF_INET; break;
 		}
-		hints.ai_socktype = SOCK_STREAM;
+		switch ( type ) {
+			case ace::ACE_SOCK_STREAM: hints.ai_socktype = SOCK_STREAM; break;
+			case ace::ACE_SOCK_DATAGRAM: hints.ai_socktype = SOCK_DGRAM; break;
+			default: hints.ai_socktype = SOCK_STREAM; break;
+		}
 		hints.ai_protocol = IPPROTO_TCP;
 		hints.ai_flags = AI_PASSIVE;
 
@@ -118,7 +122,7 @@ namespace ace {
 		return Socket ( sock );
 	}
 
-	int Socket::connect_tcp ( const char *ip , int port , addr_family family ) {
+	int Socket::connect_tcp ( const char *ip , int port , addr_family family , sock_type type ) {
 		if ( SockStatus ( ) != ACE_SOCK_OK ) {
 			ACE_SOCK_ASSERT_FUNC ( SockInit ( ) );
 		}
@@ -139,7 +143,11 @@ namespace ace {
 			case ace::ACE_AF_UNSPEC: hints.ai_family = AF_UNSPEC; break;
 			default: hints.ai_family = AF_INET; break;
 		}
-		hints.ai_socktype = SOCK_STREAM;
+		switch ( type ) {
+			case ace::ACE_SOCK_STREAM: hints.ai_socktype = SOCK_STREAM; break;
+			case ace::ACE_SOCK_DATAGRAM: hints.ai_socktype = SOCK_DGRAM; break;
+			default: hints.ai_socktype = SOCK_STREAM; break;
+		}
 		hints.ai_protocol = IPPROTO_TCP;
 
 		char service [ 64 ]; sprintf_s ( service , 64 , "%d" , port );
@@ -207,7 +215,7 @@ namespace ace {
 		return ACE_SOCK_OK;
 	}
 
-	int Socket::shutdown ( ) {
+	int Socket::shutdown ( ) const {
 		int status = ::shutdown ( id , SD_BOTH );
 		if ( status != 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
@@ -233,7 +241,7 @@ namespace ace {
 		return this->id != INVALID_SOCKET;
 	}
 
-	int Socket::send ( const void *buffer , int len ) {
+	int Socket::send ( const void *buffer , int len ) const {
 		int ret = ::send ( id , ( const char * ) buffer , len , 0 );
 		if ( ret < 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
@@ -244,7 +252,7 @@ namespace ace {
 		return ACE_SOCK_OK;
 	}
 
-	int Socket::send ( const Socket &to , const void *buffer , int len ) {
+	int Socket::send ( const Socket &to , const void *buffer , int len ) const {
 		int ret = ::send ( to.id , ( const char * ) buffer , len , 0 );
 		if ( ret < 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )

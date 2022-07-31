@@ -22,9 +22,6 @@ namespace ace {
 				}
 			}
 			this->clients.clear ( );
-
-			shutdown ( );
-			close ( );
 		}
 	}
 
@@ -70,7 +67,7 @@ namespace ace {
 			if ( new_socket.valid ( ) ) {
 				this->clients.push_back ( new_socket );
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-				printf ( "SERVER : peer %s connected.\n" , new_socket.name ( ).c_str ( ) );
+				printf ( "ace::server-socket : peer %s connected.\n" , new_socket.name ( ).c_str ( ) );
 #endif
 				OnConnect ( new_socket );
 			}
@@ -87,7 +84,7 @@ namespace ace {
 					int ret = recv ( itr->id , buffer , 65536 , 0 );
 					if ( ret == 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-						printf ( "SERVER : peer %s disconnected.\n" , itr->name ( ).c_str ( ) );
+						printf ( "ace::server-socket : peer %s disconnected.\n" , itr->name ( ).c_str ( ) );
 #endif
 						OnDisconnect ( *itr );
 						itr->shutdown ( );
@@ -95,15 +92,18 @@ namespace ace {
 						this->clients.erase ( itr );
 					} else if ( ret > 0 ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-						printf ( "SERVER : received %d bytes from client %s.\n" , ret , itr->name ( ).c_str ( ) );
+						printf ( "ace::server-socket : received %d bytes from client %s.\n" , ret , itr->name ( ).c_str ( ) );
 #endif
 						OnMessage ( *itr , buffer , ret );
 					} else {
+						int err = WSAGetLastError ( );
+						if ( err != WSAESHUTDOWN ) {
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_IO )
-						printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( WSAGetLastError ( ) ) );
+							printf ( "%s/recv failed : %s\n" , __FUNCTION__ , gai_strerrorA ( err ) );
 #endif
+						}
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
-						printf ( "SERVER : connection with %s closed.\n" , itr->name ( ).c_str ( ) );
+						printf ( "ace::server-socket : connection with %s closed.\n" , itr->name ( ).c_str ( ) );
 #endif
 						OnDisconnect ( *itr );
 						itr->close ( );
@@ -116,6 +116,12 @@ namespace ace {
 		}
 
 		free ( buffer );
+		return ACE_SOCK_OK;
+	}
+
+	int ServerSocket::Disconnect ( Socket& client ) {
+		OnDisconnect ( client );
+		ACE_SOCK_ASSERT_FUNC ( client.shutdown ( ) );
 		return ACE_SOCK_OK;
 	}
 
