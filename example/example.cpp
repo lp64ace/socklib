@@ -33,33 +33,18 @@ public:
 };
 
 int main ( void ) {
-	std::thread server ( [ ] ( ) {
-		if ( ace::SockInit ( ) == ACE_SOCK_OK ) {
-			bkServerSocket server;
-			if ( server.Start ( 80 ) == ACE_SOCK_OK ) {
-				while ( server.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
-				}
-			} else {
-				printf ( "failed to start server.\n" );
-			}
-			ace::SockQuit ( );
+	if ( ace::SockInit ( ) == ACE_SOCK_OK ) {
+		bkServerSocket server;
+		if ( server.Start ( 8080 ) != ACE_SOCK_OK ) {
+			return -1;
 		}
-	} );
-
-	std::thread client ( [ ] ( ) {
-		if ( ace::SockInit ( ) == ACE_SOCK_OK ) {
-			bkClientSocket client;
-			if ( client.ConnectTCP ( "127.0.0.1" , 80 ) == ACE_SOCK_OK ) {
-				while ( client.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
-				}
-			} else {
-				printf ( "failed to start client.\n" );
-			}
-			ace::SockQuit ( );
+		bkClientSocket client;
+		if ( client.ConnectTCP ( "127.0.0.1" , 8080 ) != ACE_SOCK_OK ) {
+			return -1;
 		}
-	} );
-
-	server.join ( );
-	client.join ( );
+		while ( server.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK && client.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
+		}
+		ace::SockQuit ( );
+	}
 	return 0;
 }
