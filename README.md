@@ -75,7 +75,7 @@ int main ( void ) {
 }
 ```
 
-### Functions
+### Virtual Functions
 
 #### Virtual Server Functions
 
@@ -88,7 +88,7 @@ int main ( void ) {
 * `void OnDisconnect ( Socket& client )` called once a client disconnects.
     * client: The client that just disconnected.
 
-#### Client Functions
+#### Virtual Client Functions
 
 * `void OnConnect ( )` called once the connection to the server is established.
 * `void OnMessage ( const void *buffer , int len )` called per message received.
