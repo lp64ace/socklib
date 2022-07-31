@@ -85,8 +85,28 @@ int main ( void ) {
 	client.join ( );
 	return 0;
 }
-
 ```
+
+### Functions
+
+#### Virtual Server Functions
+
+* `void OnConnect ( Socket& client );` called once a new client connects.
+    * client: The client that just connected.
+* `void OnMessage ( Socket& from , const void *buffer , int len )` called per message received.
+    * from: Who send the message.
+    * buffer: The data of the message.
+    * len: The length of the data.
+* `void OnDisconnect ( Socket& client )` called once a client disconnects.
+    * client: The client that just disconnected.
+
+#### Client Functions
+
+* `void OnConnect ( )` called once the connection to the server is established.
+* `void OnMessage ( const void *buffer , int len )` called per message received.
+    * buffer: The data of the message.
+    * len: The length of the data.
+* `void OnDisconnect ( ) { }` called once the conncetion to the server is lost.
 
 ## TODO :
   * Add more configurations.
