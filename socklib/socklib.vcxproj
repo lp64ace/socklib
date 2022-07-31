@@ -179,18 +179,18 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="clientsock.cpp" />
-    <ClCompile Include="serversock.cpp" />
-    <ClCompile Include="socket.cpp" />
-    <ClCompile Include="socklib.cpp" />
+    <ClInclude Include="acesock.h" />
+    <ClInclude Include="internal\clientsock.h" />
+    <ClInclude Include="internal\serversock.h" />
+    <ClInclude Include="internal\sockdefs.h" />
+    <ClInclude Include="internal\socket.h" />
+    <ClInclude Include="internal\socklib.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="acesock.h" />
-    <ClInclude Include="clientsock.h" />
-    <ClInclude Include="serversock.h" />
-    <ClInclude Include="sockdefs.h" />
-    <ClInclude Include="socket.h" />
-    <ClInclude Include="socklib.h" />
+    <ClCompile Include="internal\clientsock.cpp" />
+    <ClCompile Include="internal\serversock.cpp" />
+    <ClCompile Include="internal\socket.cpp" />
+    <ClCompile Include="internal\socklib.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

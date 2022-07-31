@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sockdefs.h"
-#include "socket.h"
-#include "socklib.h"
-#include "serversock.h"
-#include "clientsock.h"
+#include "internal/sockdefs.h"
+#include "internal/socket.h"
+#include "internal/socklib.h"
+#include "internal/serversock.h"
+#include "internal/clientsock.h"

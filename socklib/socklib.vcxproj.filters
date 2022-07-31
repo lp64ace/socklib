@@ -13,39 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\internal">
+      <UniqueIdentifier>{60f453bb-17f7-4617-8d09-af5ee7228def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\internal">
+      <UniqueIdentifier>{6450f7f4-83a8-47f1-8283-dfc7f3213be2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="socklib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="socket.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="serversock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="clientsock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="socklib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="socket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sockdefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="acesock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="serversock.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="internal\clientsock.h">
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
-    <ClInclude Include="clientsock.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="internal\serversock.h">
+      <Filter>Header Files\internal</Filter>
     </ClInclude>
+    <ClInclude Include="internal\sockdefs.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\socket.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\socklib.h">
+      <Filter>Header Files\internal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="internal\clientsock.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\serversock.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\socket.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\socklib.cpp">
+      <Filter>Source Files\internal</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b9457d32-31b4-44e6-bc14-bc9f07276155}</ProjectGuid>
-    <RootNamespace>sockserver</RootNamespace>
+    <ProjectGuid>{f9194050-f85f-4ae6-ad5c-97128cadcdfc}</ProjectGuid>
+    <RootNamespace>example</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -155,7 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sockserver.cpp" />
+    <ClCompile Include="example.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
