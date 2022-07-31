@@ -6,6 +6,12 @@
 
 namespace ace {
 
+	enum addr_family : int {
+		ACE_AF_INET, // This field specifies the ip4 family addresses.
+		ACE_AF_INET6, // This field specifies the ip6 family addresses.
+		ACE_AF_UNSPEC, // The value ACE_AF_UNSPEC indicates either ipv4 or ipv6 address families.
+	};
+
 	class Socket {
 		unsigned int id;
 	public:
@@ -17,8 +23,8 @@ namespace ace {
 
 		Socket accept ( );
 
-		int create ( int port );
-		int connect_tcp ( const char *ip , int port );
+		int create ( int port , addr_family family = ACE_AF_INET );
+		int connect_tcp ( const char *ip , int port , addr_family family = ACE_AF_INET );
 		int close ( );
 		int shutdown ( );
 

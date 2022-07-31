@@ -11,7 +11,7 @@ namespace ace {
 		ServerSocket ( );
 		~ServerSocket ( );
 
-		int Start ( int port );
+		int Start ( int port , addr_family family = ACE_AF_INET );
 
 		int PollEvents ( int timeout );
 

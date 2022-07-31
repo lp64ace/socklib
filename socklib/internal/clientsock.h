@@ -9,7 +9,7 @@ namespace ace {
 		ClientSocket ( );
 		virtual ~ClientSocket ( );
 
-		int ConnectTCP ( const char *ip , int port );
+		int ConnectTCP ( const char *ip , int port , addr_family family = ACE_AF_INET );
 
 		int PollEvents ( int timeout );
 

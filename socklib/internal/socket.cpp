@@ -23,7 +23,7 @@ namespace ace {
 
 	}
 
-	int Socket::create ( int port ) {
+	int Socket::create ( int port , addr_family family ) {
 		if ( SockStatus ( ) != ACE_SOCK_OK ) {
 			ACE_SOCK_ASSERT_FUNC ( SockInit ( ) );
 		}
@@ -38,7 +38,12 @@ namespace ace {
 		struct addrinfo *result = NULL , hints;
 
 		ZeroMemory ( &hints , sizeof ( hints ) );
-		hints.ai_family = AF_INET;
+		switch ( family ) {
+			case ace::ACE_AF_INET: hints.ai_family = AF_INET; break;
+			case ace::ACE_AF_INET6: hints.ai_family = AF_INET6; break;
+			case ace::ACE_AF_UNSPEC: hints.ai_family = AF_UNSPEC; break;
+			default: hints.ai_family = AF_INET; break;
+		}
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
 		hints.ai_flags = AI_PASSIVE;
@@ -113,7 +118,7 @@ namespace ace {
 		return Socket ( sock );
 	}
 
-	int Socket::connect_tcp ( const char *ip , int port ) {
+	int Socket::connect_tcp ( const char *ip , int port , addr_family family ) {
 		if ( SockStatus ( ) != ACE_SOCK_OK ) {
 			ACE_SOCK_ASSERT_FUNC ( SockInit ( ) );
 		}
@@ -128,7 +133,12 @@ namespace ace {
 		struct addrinfo *result = NULL , hints;
 
 		ZeroMemory ( &hints , sizeof ( hints ) );
-		hints.ai_family = AF_INET;
+		switch ( family ) {
+			case ace::ACE_AF_INET: hints.ai_family = AF_INET; break;
+			case ace::ACE_AF_INET6: hints.ai_family = AF_INET6; break;
+			case ace::ACE_AF_UNSPEC: hints.ai_family = AF_UNSPEC; break;
+			default: hints.ai_family = AF_INET; break;
+		}
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_protocol = IPPROTO_TCP;
 

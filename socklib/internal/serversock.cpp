@@ -28,8 +28,8 @@ namespace ace {
 		}
 	}
 
-	int ServerSocket::Start ( int port ) {
-		return create ( port );
+	int ServerSocket::Start ( int port , addr_family family ) {
+		return create ( port , family );
 	}
 
 	int ServerSocket::PollEvents ( int timeout ) {

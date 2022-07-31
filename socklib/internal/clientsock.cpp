@@ -21,8 +21,8 @@ namespace ace {
 		}
 	}
 
-	int ClientSocket::ConnectTCP ( const char *ip , int port ) {
-		ACE_SOCK_ASSERT_FUNC ( this->connect_tcp ( ip , port ) );
+	int ClientSocket::ConnectTCP ( const char *ip , int port , addr_family family ) {
+		ACE_SOCK_ASSERT_FUNC ( this->connect_tcp ( ip , port , family ) );
 #if ( ACE_BUILD_CONF & ACE_BUILD_WITH_DBG_IO )
 		printf ( "CLIENT : connected to %s.\n" , this->name ( ).c_str ( ) );
 #endif
