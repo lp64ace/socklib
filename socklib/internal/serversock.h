@@ -6,31 +6,51 @@
 
 namespace ace {
 
-	class ServerSocket : private Socket {
-	public:
-		ServerSocket ( );
-		~ServerSocket ( );
+class ServerSocket : private Socket {
+public:
+  struct Message {
+    Socket receiver; // us!
+    Socket sender;
+    ByteBuffer message;
+  };
 
-		int Start ( int port , addr_family family = ACE_AF_INET );
+public:
+  ServerSocket();
+  ~ServerSocket();
 
-		int PollEvents ( int timeout );
+  int start(int port, addr_family family = ACE_AF_INET);
 
-		inline int Send ( const Socket &client , const void *buf , int len ) { return Socket::send ( client , buf , len ); }
-		inline int SendInt ( const Socket &client , int var ) { return Socket::send ( client , &var , sizeof ( var ) ); }
-		inline int SendSizeT ( const Socket &client , size_t var ) { return Socket::send ( client , &var , sizeof ( var ) ); }
-		inline int SendStr ( const Socket &client , const char *str ) { return Socket::send ( client , str , strlen ( str ) + 1 ); }
+  int poll(int timeout);
 
-		inline int ToInt ( const void *buffer ) { return *( const int * ) buffer; }
-		inline size_t ToSizeT ( const void *buffer ) { return *( const size_t * ) buffer; }
-		inline const char *ToStr ( const void *buffer ) { return ( const char * ) buffer; }
+  inline int send(const Socket &client, const void *buf, int len) {
+    return Socket::send(client, buf, len);
+  }
+  inline int send_i(const Socket &client, int var) {
+    return Socket::send(client, &var, sizeof(var));
+  }
+  inline int send_z(const Socket &client, size_t var) {
+    return Socket::send(client, &var, sizeof(var));
+  }
+  inline int send_s(const Socket &client, const char *str) {
+    return Socket::send(client, str, strlen(str) + 1);
+  }
 
-		int Disconnect ( Socket& client );
+  inline int as_i(const void *buffer) { return *(const int *)buffer; }
+  inline size_t as_z(const void *buffer) { return *(const size_t *)buffer; }
+  inline const char *as_s(const void *buffer) { return (const char *)buffer; }
 
-		virtual void OnConnect ( Socket& client ) { }
-		virtual void OnMessage ( Socket& from , const void *buffer , int len ) { }
-		virtual void OnDisconnect ( Socket& client ) { }
-	private:
-		std::list<Socket> clients;
-	};
+  int disconnect(Socket &client);
 
-}
+  virtual void on_connect(const Socket &client) {}
+  virtual void on_disconnect(const Socket &client) {}
+
+  bool has_messages() const;
+  ServerSocket::Message peek_message() const;
+  ServerSocket::Message get_message();
+
+private:
+  std::queue<ServerSocket::Message> messages;
+  std::list<Socket> clients;
+};
+
+} // namespace ace

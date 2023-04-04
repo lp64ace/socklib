@@ -4,30 +4,37 @@
 
 namespace ace {
 
-	class ClientSocket : private Socket {
-	public:
-		ClientSocket ( );
-		virtual ~ClientSocket ( );
+class ClientSocket : private Socket {
+public:
+  using Message = ByteBuffer;
 
-		int ConnectTCP ( const char *ip , int port , addr_family family = ACE_AF_INET );
+public:
+  ClientSocket();
+  virtual ~ClientSocket();
 
-		int PollEvents ( int timeout );
+  int connect(const char *ip, int port, addr_family family = ACE_AF_INET);
 
-		inline int Send ( const void *buf , int len ) { return Socket::send ( buf , len ); }
-		inline int SendInt ( int var ) { return Socket::send ( &var , sizeof ( var ) ); }
-		inline int SendSizeT ( size_t var ) { return Socket::send ( &var , sizeof ( var ) ); }
-		inline int SendStr ( const char *str ) { return Socket::send ( str , strlen ( str ) + 1 ); }
+  int poll(int timeout);
 
-		inline int ToInt ( const void *buffer ) { return *( const int * ) buffer; }
-		inline size_t ToSizeT ( const void *buffer ) { return *( const size_t * ) buffer; }
-		inline const char *ToStr ( const void *buffer ) { return ( const char * ) buffer; }
+  inline int send(const void *buf, int len) { return Socket::send(buf, len); }
+  inline int send_i(int var) { return Socket::send(&var, sizeof(var)); }
+  inline int send_z(size_t var) { return Socket::send(&var, sizeof(var)); }
+  inline int send_s(const char *str) {
+    return Socket::send(str, strlen(str) + 1);
+  }
 
-		int Disconnect ( ) const;
+  inline int as_i(const void *buffer) { return *(const int *)buffer; }
+  inline size_t as_z(const void *buffer) { return *(const size_t *)buffer; }
+  inline const char *as_s(const void *buffer) { return (const char *)buffer; }
 
-		virtual void OnConnect ( ) { }
-		virtual void OnMessage ( const void *buffer , int len ) { }
-		virtual void OnDisconnect ( ) { }
-	};
+  int disconnect() const;
 
-}
+  bool has_messages() const;
+  ClientSocket::Message peek_message() const;
+  ClientSocket::Message get_message();
 
+private:
+  std::queue<ClientSocket::Message> messages;
+};
+
+} // namespace ace
