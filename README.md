@@ -23,53 +23,32 @@ using namespace ace;
 #include <acesock.h>
 #include <stdio.h>
 
-#define TIMEOUT_MS			16
+#define TIMEOUT_MS 16
 
-class bkServerSocket : public ace::ServerSocket {
-public:
-	void OnConnect ( ace::Socket &client ) { // A client connected to this server.
-		this->SendStr ( client , "Greetings from Server." );
-	}
-
-	void OnMessage ( ace::Socket &from , const void *buffer , int len ) { // Received message from client.
-		printf ( "server : '%s'\n" , ( const char * ) buffer );
-		this->Disconnect ( from );
-	}
-
-	void OnDisconnect ( ace::Socket &client ) { // Lost connection to client.
-		printf ( "server : %s disconnected.\n" , client.name ( ).c_str ( ) );
-	}
-};
-
-class bkClientSocket : public ace::ClientSocket {
-public:
-	void OnConnect ( ) { // Connected to server.
-		this->SendStr ( "Greetings from Client." );
-	}
-
-	void OnMessage ( const void *buffer , int len ) { // Received message from server.
-		printf ( "client : '%s'\n" , ToStr ( buffer ) );
-	}
-
-	void OnDisconnect ( ) { // Lost connection to server.
-		printf ( "client : disconnected.\n" );
-	}
-};
-
-int main ( void ) {
-	if ( ace::SockInit ( ) == ACE_SOCK_OK ) { // Init the socket data.
-		bkServerSocket server; // Create the server object.
-		if ( server.Start ( 8080 ) != ACE_SOCK_OK ) { // Start the server on port 8080.
+int main(void) {
+	if (ace::SockInit() == ACE_SOCK_OK) { // Init the socket data.
+		ace::ServerSocket server;
+		if (server.start(8080) != ACE_SOCK_OK) {
 			return -1;
 		}
-		bkClientSocket client; // Create teh client object.
-		if ( client.ConnectTCP ( "127.0.0.1" , 8080 ) != ACE_SOCK_OK ) { // Connect the client to our server.
+		ace::ClientSocket client;
+		if (client.connect("127.0.0.1", 8080) != ACE_SOCK_OK) {
 			return -1;
 		}
-		// Handle events for our server and client for 16ms each until there is an error.
-		while ( server.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK && client.PollEvents ( TIMEOUT_MS ) == ACE_SOCK_OK ) {
+		client.send_s("greetings from client!");
+		while (server.poll(TIMEOUT_MS) == ACE_SOCK_OK && client.poll(TIMEOUT_MS) == ACE_SOCK_OK) {
+			while (server.has_messages()) {
+				ace::ServerSocket::Message msg = server.get_message();
+				printf("[server] received %zu bytes '%s' from '%s'.\n", msg.message.size(), (const char *)msg.message.data(), msg.sender.name().c_str());
+				server.send_s(msg.sender, "greetings from server!");
+			}
+			while (client.has_messages()) {
+				ace::ClientSocket::Message msg = client.get_message();
+				printf("[client] received %zu bytes '%s'.\n", msg.size(), msg.data());
+				client.send_s("greetings from client!");
+			}
 		}
-		ace::SockQuit ( ); // Cleanup the socket data.
+		ace::SockQuit(); // Cleanup the socket data.
 	}
 	return 0;
 }

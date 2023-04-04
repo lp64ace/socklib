@@ -14,8 +14,6 @@ int main(void) {
       return -1;
     }
     client.send_s("greetings from client!");
-    // Handle events for our server and client for 16ms each until there is an
-    // error.
     while (server.poll(TIMEOUT_MS) == ACE_SOCK_OK &&
            client.poll(TIMEOUT_MS) == ACE_SOCK_OK) {
       while (server.has_messages()) {
@@ -30,7 +28,6 @@ int main(void) {
         printf("[client] received %zu bytes '%s'.\n", msg.size(), msg.data());
         client.send_s("greetings from client!");
       }
-      Sleep(16);
     }
     ace::SockQuit(); // Cleanup the socket data.
   }
